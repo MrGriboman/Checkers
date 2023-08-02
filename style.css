@@ -4,11 +4,11 @@
 }
 
 body {
-    background-color: beige;
+    background-color:cornflowerblue;
 }
 
 #canvas {
-    background-color: darkgrey;
+    background-color:beige;
     position: absolute;
     left: 50%;
     top: 50%;
