@@ -2,8 +2,9 @@ import { Checker } from "./checker.mjs";
 import { Colors } from "./colors.mjs";
 
 export class Board {
-    constructor() {
-        this.field = [...Array(100)]
+    constructor(block_size) {
+        this.field = [...Array(100)];
+        this.block_size = block_size;
     }   
     
     drawBoard(can, nRow=8, nCol=8) {
@@ -24,7 +25,7 @@ export class Board {
     }
 
     populate(can) {
-        const checker = new Checker(30, 30, Colors.WHITE);
+        const checker = new Checker(2, 5, Colors.WHITE, this.block_size);
         checker.draw(can)
     }
 }

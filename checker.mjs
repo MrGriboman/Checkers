@@ -1,9 +1,9 @@
 import { Colors } from "./colors.mjs";
 
 export class Checker {
-    constructor(x, y, color) {
-        this.x = x;
-        this.y = y;
+    constructor(x, y, color, block_size) {
+        this.x = x * block_size;
+        this.y = y * block_size;
         this.isKing = false;
         this.color = color;
     }
@@ -22,7 +22,7 @@ export class Checker {
         const block_size = canvas.width / 8;
         ctx.fillStyle = '#FFFFFF';
         ctx.beginPath();
-        ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI);
+        ctx.arc(this.x + block_size / 2, this.y + block_size / 2, block_size / 2 - 10, 0, 2 * Math.PI);
         ctx.fill();
     }
 }
