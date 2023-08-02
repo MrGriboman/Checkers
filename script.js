@@ -1,25 +1,11 @@
+import { Board } from "./Board.mjs";
+import { Colors } from "./colors.mjs";
+
 window.addEventListener('load', function() {
-    let canvas = document.getElementById("canvas");
-
-    drawBoard(canvas);
+    const canvas = document.getElementById("canvas");
+    const board = new Board();
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    board.drawBoard(canvas);
+    board.populate(canvas);
 });
-
-function drawBoard(can, nRow=8, nCol=8) {
-    var ctx = can.getContext("2d");
-    var w = can.width;
-    var h = can.height;
-
-    nRow = nRow || 8;    // default number of rows
-    nCol = nCol || 8;    // default number of columns
-
-    w /= nCol;            // width of a block
-    h /= nRow;            // height of a block
-
-    for (var i = 0; i < nRow; ++i) {
-        for (var j = 0, col = nCol / 2; j < col; ++j) {
-            ctx.rect(2 * j * w + (i % 2 ? 0 : w), i * h, w, h);
-        }
-    }
-
-    ctx.fill();
-}
