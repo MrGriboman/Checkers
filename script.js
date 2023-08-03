@@ -9,4 +9,14 @@ window.addEventListener('load', function() {
     canvas.height = canvas.offsetHeight;
     board.drawBoard(canvas);
     board.populate(canvas);
+    canvas.addEventListener('mousedown', function(e) {
+        board.chooseChecker(canvas, e)
+    });
 });
+
+/*function getCursorPosition(canvas, event) {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    console.log("x: " + x + " y: " + y);
+}*/
