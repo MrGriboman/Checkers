@@ -7,6 +7,7 @@ export class Board {
         this.field = [...Array(100)];
         this.block_size = block_size;
         this.checkers = {};
+        this.game = new Game();
     }   
     
     drawBoard(can, nRow=8, nCol=8) {
@@ -54,16 +55,12 @@ export class Board {
         const x = Math.floor((event.clientX - rect.left) / this.block_size);        
         const y = Math.floor((event.clientY - rect.top) / this.block_size);
         console.log("x: " + x + " y: " + y);
-        if ([y, x] in this.checkers)
-            this.highlightChecker(canvas, x, y);     
-    }
-
-    highlightChecker(canvas, x, y) {
-        const ctx = canvas.getContext('2d');
-        ctx.strokeStyle = "#00FF00";
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.arc(x * this.block_size + this.block_size / 2, y * this.block_size + this.block_size / 2, this.block_size / 2 - 10, 0, 2 * Math.PI);
-        ctx.stroke();
-    }
+        if ([y, x] in this.checkers && this.checkers[[y, x]].color === this.game.turn) {
+            const checker = this.checkers[[y, x]];
+            if (!checker.highlighted)
+                checker.highlight(canvas, this.block_size);
+            else
+                checker.downlight(canvas, this.block_size);
+        }
+    }    
 }
