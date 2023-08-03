@@ -35,7 +35,7 @@ export class Board {
                 if ((i + j) % 2 != 0) {
                     let checker = new Checker(j, i, Colors.BLACK, this.block_size);
                     checker.draw(can);
-                    this.checkers[[i, j]] = checker;
+                    this.checkers[[j, i]] = checker;
                 }
             }
         }
@@ -44,7 +44,7 @@ export class Board {
                 if ((i + j) % 2 != 0) {
                     let checker = new Checker(j, i, Colors.WHITE, this.block_size);
                     checker.draw(can);
-                    this.checkers[[i, j]] = checker;
+                    this.checkers[[j, i]] = checker;
                 }
             }
         }        
@@ -54,7 +54,7 @@ export class Board {
         const rect = canvas.getBoundingClientRect();
         const x = Math.floor((event.clientX - rect.left) / this.block_size);        
         const y = Math.floor((event.clientY - rect.top) / this.block_size);
-        if ([y, x] in this.checkers && this.checkers[[y, x]].color === this.game.turn) {
+        if ([x, y] in this.checkers && this.checkers[[x, y]].color === this.game.turn) {
             this.chooseChecker(canvas, x, y);
         }
         else if (this.activeChecker !== null && (x + y) % 2 != 0) {
@@ -63,7 +63,7 @@ export class Board {
     }  
     
     chooseChecker(canvas, x, y) {
-        const checker = this.checkers[[y, x]];
+        const checker = this.checkers[[x, y]];
         if (!checker.highlighted) {                
             if (this.activeChecker !== null)
                 this.activeChecker.downlight(canvas, this.block_size);
@@ -79,9 +79,9 @@ export class Board {
 
     moveChecker(canvas, x, y) {
         this.activeChecker.downlight(canvas, this.block_size)
-        delete this.checkers[[this.activeChecker.y, this.activeChecker.x]]
+        delete this.checkers[[this.activeChecker.x, this.activeChecker.y]]
         this.activeChecker.move(canvas, x, y);
-        this.checkers[[this.activeChecker.y, this.activeChecker.x]] = this.activeChecker;
+        this.checkers[[this.activeChecker.x, this.activeChecker.y]] = this.activeChecker;
         this.activeChecker = null;
         this.game.turn = (this.game.turn === Colors.BLACK) ? Colors.WHITE : Colors.BLACK;        
     }
