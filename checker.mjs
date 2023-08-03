@@ -73,8 +73,13 @@ export class Checker {
             }
         }
         console.log(path);
-        console.log(destinations);
+        let dests = [...new Set(destinations)];
+        console.log(dests);
         console.log(eaten);
-        return path;
+        return {
+            'path': path,
+            'destinations': dests,
+            'eaten': eaten
+        }
     }
 }

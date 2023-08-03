@@ -70,6 +70,7 @@ export class Board {
             this.activeChecker = checker;
             this.activeChecker.highlight(canvas, this.block_size);
             this.activeChecker.findPossibleMoves(this.checkers);
+            console.log(this.activeChecker)
         }
         else {
             checker.downlight(canvas, this.block_size);
