@@ -53,4 +53,28 @@ export class Checker {
         ctx.rect(this.x * block_size, this.y * block_size, block_size, block_size);
         ctx.fill();
     }
+
+    findPossibleMoves(checkers, x=this.x, y=this.y, path=[], destinations=[], eaten={}) {        
+        for (let i = -1; i <= 1; i += 2) {
+            for (let j = -1; j <= 1; j += 2) {
+                let found_new_path = false;                         
+                if ([y + i, x + j] in checkers && checkers[[y + i, x + j]].color !== this.color && (y + 2*i >= 0 && y + 2*i < 8 && x + 2*j >= 0 && x + 2*j < 8) && !([y + 2*i, x + 2*j] in checkers)) { 
+                    if ([y + i, x + j] in eaten)
+                        continue;
+                    found_new_path = true;
+                    console.log(x + 2*j, y + 2*i);
+                    path.push([x + 2*j, y + 2*i]);
+                    eaten[[y + i, x + j]] = checkers[[y + i, x + j]];                   
+                    this.findPossibleMoves(checkers, x + 2*j, y + 2*i, path, destinations, eaten);
+                }
+                if (found_new_path) {
+                    destinations.push(path.at(-1));
+                }
+            }
+        }
+        console.log(path);
+        console.log(destinations);
+        console.log(eaten);
+        return path;
+    }
 }

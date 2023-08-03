@@ -47,35 +47,50 @@ export class Board {
                     this.checkers[[i, j]] = checker;
                 }
             }
-        }
-        console.log(this.checkers)
+        }        
     }
 
-    chooseChecker(canvas, event) {
+    handleClick(canvas, event) {
         const rect = canvas.getBoundingClientRect();
         const x = Math.floor((event.clientX - rect.left) / this.block_size);        
         const y = Math.floor((event.clientY - rect.top) / this.block_size);
-        console.log("x: " + x + " y: " + y);
         if ([y, x] in this.checkers && this.checkers[[y, x]].color === this.game.turn) {
-            const checker = this.checkers[[y, x]];
-            if (!checker.highlighted) {                
-                if (this.activeChecker !== null)
-                    this.activeChecker.downlight(canvas, this.block_size);
-                this.activeChecker = checker;
-                this.activeChecker.highlight(canvas, this.block_size);
-                console.log(this.activeChecker);
-            }
-            else {
-                checker.downlight(canvas, this.block_size);
-            }
+            this.chooseChecker(canvas, x, y);
         }
         else if (this.activeChecker !== null && (x + y) % 2 != 0) {
-            this.activeChecker.downlight(canvas, this.block_size)
-            delete this.checkers[[this.activeChecker.y, this.activeChecker.x]]
-            this.activeChecker.move(canvas, x, y);
-            this.checkers[[this.activeChecker.y, this.activeChecker.x]] = this.activeChecker;
-            this.activeChecker = null;
-            this.game.turn = (this.game.turn === Colors.BLACK) ? Colors.WHITE : Colors.BLACK;
+            this.moveChecker(canvas, x, y);
         }
-    }    
+    }  
+    
+    chooseChecker(canvas, x, y) {
+        const checker = this.checkers[[y, x]];
+        if (!checker.highlighted) {                
+            if (this.activeChecker !== null)
+                this.activeChecker.downlight(canvas, this.block_size);
+            this.activeChecker = checker;
+            this.activeChecker.highlight(canvas, this.block_size);
+            this.activeChecker.findPossibleMoves(this.checkers);
+        }
+        else {
+            checker.downlight(canvas, this.block_size);
+        }
+    }
+
+    moveChecker(canvas, x, y) {
+        this.activeChecker.downlight(canvas, this.block_size)
+        delete this.checkers[[this.activeChecker.y, this.activeChecker.x]]
+        this.activeChecker.move(canvas, x, y);
+        this.checkers[[this.activeChecker.y, this.activeChecker.x]] = this.activeChecker;
+        this.activeChecker = null;
+        this.game.turn = (this.game.turn === Colors.BLACK) ? Colors.WHITE : Colors.BLACK;        
+    }
+
+    redraw(canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.drawBoard(canvas);
+        for (let checker_coords in this.checkers) {
+            this.checkers[checker_coords].draw(canvas);
+        }
+    }
 }

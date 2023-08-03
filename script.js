@@ -12,7 +12,7 @@ window.addEventListener('load', function() {
     board.drawBoard(canvas);
     board.populate(canvas);
     canvas.addEventListener('mousedown', function(e) {        
-        board.chooseChecker(canvas, e)
+        board.handleClick(canvas, e)
     });
 });
 
