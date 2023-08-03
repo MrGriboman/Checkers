@@ -3,11 +3,12 @@ import { Colors } from "./colors.mjs";
 import { Game } from "./Game.mjs";
 
 export class Board {
-    constructor(block_size) {
+    constructor(block_size, game) {
         this.field = [...Array(100)];
         this.block_size = block_size;
         this.checkers = {};
-        this.game = new Game();
+        this.game = game;
+        this.activeChecker = null;
     }   
     
     drawBoard(can, nRow=8, nCol=8) {
@@ -57,10 +58,24 @@ export class Board {
         console.log("x: " + x + " y: " + y);
         if ([y, x] in this.checkers && this.checkers[[y, x]].color === this.game.turn) {
             const checker = this.checkers[[y, x]];
-            if (!checker.highlighted)
-                checker.highlight(canvas, this.block_size);
-            else
+            if (!checker.highlighted) {                
+                if (this.activeChecker !== null)
+                    this.activeChecker.downlight(canvas, this.block_size);
+                this.activeChecker = checker;
+                this.activeChecker.highlight(canvas, this.block_size);
+                console.log(this.activeChecker);
+            }
+            else {
                 checker.downlight(canvas, this.block_size);
+            }
+        }
+        else if (this.activeChecker !== null && (x + y) % 2 != 0) {
+            this.activeChecker.downlight(canvas, this.block_size)
+            delete this.checkers[[this.activeChecker.y, this.activeChecker.x]]
+            this.activeChecker.move(canvas, x, y);
+            this.checkers[[this.activeChecker.y, this.activeChecker.x]] = this.activeChecker;
+            this.activeChecker = null;
+            this.game.turn = (this.game.turn === Colors.BLACK) ? Colors.WHITE : Colors.BLACK;
         }
     }    
 }

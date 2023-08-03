@@ -13,9 +13,12 @@ export class Checker {
         this.isKing = true;
     }
 
-    move(x, y) {
+    move(canvas, x, y) {
+        const block_size = canvas.width / 8;
+        this.remove(canvas, block_size)
         this.x = x;
-        this.y = y;        
+        this.y = y;   
+        this.draw(canvas)     
     }
 
     draw(canvas) {
@@ -38,12 +41,16 @@ export class Checker {
     }
 
     downlight (canvas, block_size) {
+        this.remove(canvas, block_size);
+        this.draw(canvas);
+        this.highlighted = false;
+    }
+
+    remove(canvas, block_size) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(this.x * block_size, this.y * block_size, block_size, block_size);
         ctx.fillStyle = "#CC9966";
         ctx.rect(this.x * block_size, this.y * block_size, block_size, block_size);
         ctx.fill();
-        this.draw(canvas);
-        this.highlighted = false;
     }
 }

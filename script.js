@@ -1,15 +1,17 @@
 import { Board } from "./Board.mjs";
 import { Colors } from "./colors.mjs";
+import { Game } from "./Game.mjs";
 
 window.addEventListener('load', function() {
     const canvas = document.getElementById("canvas");
-    const block_size = canvas.scrollWidth / 8;    
-    const board = new Board(block_size);
+    const block_size = canvas.scrollWidth / 8;  
+    const game = new Game();  
+    const board = new Board(block_size, game);
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
     board.drawBoard(canvas);
     board.populate(canvas);
-    canvas.addEventListener('mousedown', function(e) {
+    canvas.addEventListener('mousedown', function(e) {        
         board.chooseChecker(canvas, e)
     });
 });
