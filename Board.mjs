@@ -22,7 +22,7 @@ export class Board {
         w /= nCol;            // width of a block
         h /= nRow;            // height of a block
 
-        ctx.fillStyle = "#CC9966";
+        ctx.fillStyle = Colors.BROWN;
         for (let i = 0; i < nRow; ++i) {
             for (let j = 0, col = nCol / 2; j < col; ++j) {
                 ctx.rect(2 * j * w + (i % 2 ? 0 : w), i * h, w, h);
@@ -111,13 +111,13 @@ export class Board {
         console.log(destinations)
         const ctx = canvas.getContext('2d');
         for (let key in path) {
-            this.colorBlock(ctx, path[key][0], path[key][1], "#7FC7FF");
+            this.colorBlock(ctx, path[key][0], path[key][1], Colors.BLUE);
         }
         for (let key in destinations) {
-            this.colorBlock(ctx, key[0], key[2], "#77DD77");
+            this.colorBlock(ctx, key[0], key[2], Colors.GREEN);
         }
         for (let key in eaten){
-            this.colorBlock(ctx, key[0], key[2], "#FF8C69");
+            this.colorBlock(ctx, key[0], key[2], Colors.RED);
             eaten[key].draw(canvas)
         }
 
@@ -146,7 +146,7 @@ export class Board {
     markAvailable(canvas) {
         const ctx = canvas.getContext('2d');
         for (let key in this.available) {
-            this.colorBlock(ctx, key[0], key[2], "#FFCF48");
+            this.colorBlock(ctx, key[0], key[2], Colors.YELLOW);
             this.available[key].draw(canvas);
         }
     }
