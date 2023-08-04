@@ -76,6 +76,15 @@ export class Checker {
         let dests = [...new Set(destinations)];
         //console.log(dests);
         //console.log(eaten);
+        if (Object.keys(eaten).length == 0) {
+            console.log('no food')
+            if (!([x + 1, y - 1] in checkers) && x + 1 < 8 && y - 1 >= 0) {
+                dests.push([x + 1, y - 1]);
+            }
+            if (!([x - 1, y - 1] in checkers) && x - 1 >= 0 && y - 1 >= 0) {
+                dests.push([x - 1, y - 1]);
+            }
+        }
         return { 
             'path': path,
             'destinations': dests,
