@@ -69,8 +69,8 @@ export class Board {
                 this.activeChecker.downlight(canvas, this.block_size);
             this.activeChecker = checker;
             this.activeChecker.highlight(canvas, this.block_size);
-            this.activeChecker.findPossibleMoves(this.checkers);
-            console.log(this.activeChecker)
+            const moves = this.activeChecker.findPossibleMoves(this.checkers);
+            this.drawPaths(canvas, moves);        
         }
         else {
             checker.downlight(canvas, this.block_size);
@@ -83,7 +83,8 @@ export class Board {
         this.activeChecker.move(canvas, x, y);
         this.checkers[[this.activeChecker.x, this.activeChecker.y]] = this.activeChecker;
         this.activeChecker = null;
-        this.game.turn = (this.game.turn === Colors.BLACK) ? Colors.WHITE : Colors.BLACK;        
+        this.game.turn = (this.game.turn === Colors.BLACK) ? Colors.WHITE : Colors.BLACK; 
+        this.redraw(canvas)     
     }
 
     redraw(canvas) {
@@ -93,5 +94,27 @@ export class Board {
         for (let checker_coords in this.checkers) {
             this.checkers[checker_coords].draw(canvas);
         }
+    }
+
+    drawPaths(canvas, moves) {
+        const {path, destinations, eaten} = moves;
+        const ctx = canvas.getContext('2d');
+        for (let key in path) {
+            this.colorBlock(ctx, path[key][0], path[key][1], "#7FC7FF");
+        }
+        for (let key in destinations) {
+            this.colorBlock(ctx, destinations[key][0], destinations[key][1], "#77DD77");
+        }
+        for (let key in eaten){
+            this.colorBlock(ctx, key[0], key[2], "#FF0000");
+            eaten[key].draw(canvas)
+        }
+
+    }
+
+    colorBlock(ctx, x, y, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x * this.block_size, y * this.block_size, this.block_size, this.block_size);
+        //ctx.fill();
     }
 }
