@@ -54,7 +54,7 @@ export class Checker {
         ctx.fill();
     }
 
-    findPossibleMoves(checkers, x=this.x, y=this.y, path=[], destinations=[], eaten={}) {        
+    findPossibleMoves(checkers, x=this.x, y=this.y, path=[], destinations={}, eaten={}) {        
         for (let i = -1; i <= 1; i += 2) {
             for (let j = -1; j <= 1; j += 2) {
                 let found_new_path = false;                         
@@ -67,26 +67,22 @@ export class Checker {
                     this.findPossibleMoves(checkers, x + 2*i, y + 2*j, path, destinations, eaten);
                 }
                 if (found_new_path) {
-                    destinations.push(path.at(-1));
+                    destinations[[path.at(-1)[0], path.at(-1)[1]]] = true;
                 }
             }
-        }       
-        let dests = [...new Set(destinations)];        
-        if (Object.keys(eaten).length == 0) {
-            console.log(this)
-            console.log(this.color)
+        }                       
+        if (Object.keys(eaten).length == 0) {            
             const offset = (this.color == Colors.WHITE) ? -1 : 1;
-            console.log(offset);
             if (!([x + 1, y + offset] in checkers) && x + 1 < 8 && y + offset >= 0) {
-                dests.push([x + 1, y + offset]);
+                destinations[[x + 1, y + offset]] = true;
             }
             if (!([x - 1, y + offset] in checkers) && x - 1 >= 0 && y + offset >= 0) {
-                dests.push([x - 1, y + offset]);
+                destinations[[x - 1, y + offset]] = true;
             }
         }
         return { 
             'path': path,
-            'destinations': dests,
+            'destinations': destinations,
             'eaten': eaten
         }
     }

@@ -11,6 +11,7 @@ export class Board {
         this.activeChecker = null;
         this.gottaKill = false;
         this.available = {};
+        this.destinations = {};
     }   
     
     drawBoard(can, nRow=8, nCol=8) {
@@ -59,7 +60,7 @@ export class Board {
         if ([x, y] in this.checkers && this.checkers[[x, y]].color === this.game.turn && Object.keys(this.available).length == 0 || [x, y] in this.available) {            
             this.chooseChecker(canvas, x, y);
         }
-        else if (this.activeChecker !== null && (x + y) % 2 != 0 && !([x, y] in this.checkers)) {
+        else if (this.activeChecker !== null && [x, y] in this.destinations) {
             this.moveChecker(canvas, x, y);
         }
     }  
@@ -72,7 +73,8 @@ export class Board {
                 this.redraw(canvas);
             this.activeChecker = checker;
             this.activeChecker.highlight(canvas, this.block_size);
-            const moves = this.activeChecker.findPossibleMoves(this.checkers);        
+            const moves = this.activeChecker.findPossibleMoves(this.checkers);  
+            this.destinations = moves.destinations;      
             this.drawPaths(canvas, moves);        
         }
         else {
@@ -103,12 +105,13 @@ export class Board {
 
     drawPaths(canvas, moves) {
         const {path, destinations, eaten} = moves;
+        console.log(destinations)
         const ctx = canvas.getContext('2d');
         for (let key in path) {
             this.colorBlock(ctx, path[key][0], path[key][1], "#7FC7FF");
         }
         for (let key in destinations) {
-            this.colorBlock(ctx, destinations[key][0], destinations[key][1], "#77DD77");
+            this.colorBlock(ctx, key[0], key[2], "#77DD77");
         }
         for (let key in eaten){
             this.colorBlock(ctx, key[0], key[2], "#FF8C69");
