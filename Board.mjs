@@ -12,7 +12,6 @@ export class Board {
         this.gottaKill = false;
         this.available = {};
         this.destinations = {};
-        this.toEat = {};
     }   
     
     drawBoard(can, nRow=8, nCol=8) {
@@ -77,7 +76,6 @@ export class Board {
             this.activeChecker.highlight(canvas, this.block_size);
             const moves = this.activeChecker.findPossibleMoves(this.checkers);  
             this.destinations = moves.destinations;   
-            this.toEat = moves.eaten;   
             this.drawPaths(canvas, moves);        
         }
         else {
@@ -93,7 +91,7 @@ export class Board {
         this.activeChecker.move(canvas, x, y);
         this.checkers[[this.activeChecker.x, this.activeChecker.y]] = this.activeChecker;
         this.activeChecker = null;
-        this.removeEaten();
+        this.removeEaten(this.destinations[[x, y]]);
         this.game.changeTurn(); 
         this.redraw(canvas);
         this.available = this.thereWillBeBlood();
@@ -154,8 +152,8 @@ export class Board {
         }
     }
 
-    removeEaten() {
-        for (let key in this.toEat) {
+    removeEaten(toEat) {
+        for (let key in toEat) {
             delete this.checkers[[key]];
         }
     }
