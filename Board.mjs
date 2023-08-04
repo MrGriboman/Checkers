@@ -9,6 +9,8 @@ export class Board {
         this.checkers = {};
         this.game = game;
         this.activeChecker = null;
+        this.gottaKill = false;
+        this.available = {};
     }   
     
     drawBoard(can, nRow=8, nCol=8) {
@@ -54,10 +56,10 @@ export class Board {
         const rect = canvas.getBoundingClientRect();
         const x = Math.floor((event.clientX - rect.left) / this.block_size);        
         const y = Math.floor((event.clientY - rect.top) / this.block_size);
-        if ([x, y] in this.checkers && this.checkers[[x, y]].color === this.game.turn) {
+        if ([x, y] in this.checkers && this.checkers[[x, y]].color === this.game.turn && Object.keys(this.available).length == 0 || [x, y] in this.available) {            
             this.chooseChecker(canvas, x, y);
         }
-        else if (this.activeChecker !== null && (x + y) % 2 != 0) {
+        else if (this.activeChecker !== null && (x + y) % 2 != 0 && !([x, y] in this.checkers)) {
             this.moveChecker(canvas, x, y);
         }
     }  
@@ -70,7 +72,7 @@ export class Board {
                 this.redraw(canvas);
             this.activeChecker = checker;
             this.activeChecker.highlight(canvas, this.block_size);
-            const moves = this.activeChecker.findPossibleMoves(this.checkers);           
+            const moves = this.activeChecker.findPossibleMoves(this.checkers);        
             this.drawPaths(canvas, moves);        
         }
         else {
@@ -86,7 +88,8 @@ export class Board {
         this.checkers[[this.activeChecker.x, this.activeChecker.y]] = this.activeChecker;
         this.activeChecker = null;
         this.game.changeTurn(); 
-        this.redraw(canvas)     
+        this.redraw(canvas);
+        this.available = this.thereWillBeBlood();
     }
 
     redraw(canvas) {
@@ -118,5 +121,19 @@ export class Board {
         ctx.fillStyle = color;
         ctx.fillRect(x * this.block_size, y * this.block_size, this.block_size, this.block_size);
         //ctx.fill();
+    }
+
+    thereWillBeBlood() {
+        let available = {};
+        for (let checker_coords in this.checkers) {
+            const checker = this.checkers[checker_coords];
+            if (checker.color != this.game.turn)
+                continue;
+            const moves = checker.findPossibleMoves(this.checkers);
+            const {eaten} = moves;
+            if (Object.keys(eaten).length > 0)
+                available[[checker.x, checker.y]] = checker;
+        }
+        return available;
     }
 }
