@@ -33,7 +33,7 @@ export class Board {
         for (let i = 0; i < 3; ++i) {
             for (let j = 0; j < 8; ++j) {
                 if ((i + j) % 2 != 0) {
-                    let checker = new Checker(j, i, Colors.BLACK, this.block_size);
+                    let checker = new Checker(j, i, Colors.BLACK);
                     checker.draw(can);
                     this.checkers[[j, i]] = checker;
                 }
@@ -42,7 +42,7 @@ export class Board {
         for (let i = 5; i < 8; ++i) {
             for (let j = 0; j < 8; ++j) {
                 if ((i + j) % 2 != 0) {
-                    let checker = new Checker(j, i, Colors.WHITE, this.block_size);
+                    let checker = new Checker(j, i, Colors.WHITE);
                     checker.draw(can);
                     this.checkers[[j, i]] = checker;
                 }
@@ -67,13 +67,15 @@ export class Board {
         if (!checker.highlighted) {                
             if (this.activeChecker !== null)
                 this.activeChecker.downlight(canvas, this.block_size);
+                this.redraw(canvas);
             this.activeChecker = checker;
             this.activeChecker.highlight(canvas, this.block_size);
-            const moves = this.activeChecker.findPossibleMoves(this.checkers);
+            const moves = this.activeChecker.findPossibleMoves(this.checkers);           
             this.drawPaths(canvas, moves);        
         }
         else {
             checker.downlight(canvas, this.block_size);
+            this.redraw(canvas)
         }
     }
 
@@ -83,7 +85,7 @@ export class Board {
         this.activeChecker.move(canvas, x, y);
         this.checkers[[this.activeChecker.x, this.activeChecker.y]] = this.activeChecker;
         this.activeChecker = null;
-        this.game.turn = (this.game.turn === Colors.BLACK) ? Colors.WHITE : Colors.BLACK; 
+        this.game.changeTurn(); 
         this.redraw(canvas)     
     }
 
@@ -106,7 +108,7 @@ export class Board {
             this.colorBlock(ctx, destinations[key][0], destinations[key][1], "#77DD77");
         }
         for (let key in eaten){
-            this.colorBlock(ctx, key[0], key[2], "#FF0000");
+            this.colorBlock(ctx, key[0], key[2], "#FF8C69");
             eaten[key].draw(canvas)
         }
 

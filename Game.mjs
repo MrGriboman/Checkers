@@ -6,7 +6,7 @@ export class Game {
         this.turn = Colors.WHITE;
     }
 
-    change_turn() {
+    changeTurn() {
         this.turn = (this.turn === Colors.WHITE) ? Colors.BLACK : Colors.WHITE;
     }
 }

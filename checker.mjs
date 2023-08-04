@@ -1,7 +1,7 @@
 import { Colors } from "./colors.mjs";
 
 export class Checker {
-    constructor(x, y, color, block_size) {
+    constructor(x, y, color) {
         this.x = x;
         this.y = y;
         this.isKing = false;
@@ -24,7 +24,7 @@ export class Checker {
     draw(canvas) {
         const ctx = canvas.getContext('2d');
         const block_size = canvas.width / 8;
-        ctx.fillStyle = (this.color === Colors.BLACK) ? "#000000" : "#FFFFFF";
+        ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.arc(this.x * block_size + block_size / 2, this.y * block_size + block_size / 2, block_size / 2 - 10, 0, 2 * Math.PI);
         ctx.fill();
@@ -61,8 +61,7 @@ export class Checker {
                 if ([x + i, y + j] in checkers && checkers[[x + i, y + j]].color !== this.color && (x + 2*i >= 0 && x + 2*i < 8 && y + 2*j >= 0 && y + 2*j < 8) && !([x + 2*i, y + 2*j] in checkers)) { 
                     if ([x + i, y + j] in eaten)
                         continue;
-                    found_new_path = true;
-                    console.log(x + 2*j, y + 2*i);
+                    found_new_path = true;                    
                     path.push([x + 2*i, y + 2*j]);
                     eaten[[x + i, y + j]] = checkers[[x + i, y + j]];                   
                     this.findPossibleMoves(checkers, x + 2*i, y + 2*j, path, destinations, eaten);
@@ -71,18 +70,18 @@ export class Checker {
                     destinations.push(path.at(-1));
                 }
             }
-        }
-        //console.log(path);
-        let dests = [...new Set(destinations)];
-        //console.log(dests);
-        //console.log(eaten);
+        }       
+        let dests = [...new Set(destinations)];        
         if (Object.keys(eaten).length == 0) {
-            console.log('no food')
-            if (!([x + 1, y - 1] in checkers) && x + 1 < 8 && y - 1 >= 0) {
-                dests.push([x + 1, y - 1]);
+            console.log(this)
+            console.log(this.color)
+            const offset = (this.color == Colors.WHITE) ? -1 : 1;
+            console.log(offset);
+            if (!([x + 1, y + offset] in checkers) && x + 1 < 8 && y + offset >= 0) {
+                dests.push([x + 1, y + offset]);
             }
-            if (!([x - 1, y - 1] in checkers) && x - 1 >= 0 && y - 1 >= 0) {
-                dests.push([x - 1, y - 1]);
+            if (!([x - 1, y + offset] in checkers) && x - 1 >= 0 && y + offset >= 0) {
+                dests.push([x - 1, y + offset]);
             }
         }
         return { 
