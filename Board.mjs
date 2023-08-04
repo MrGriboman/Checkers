@@ -71,6 +71,7 @@ export class Board {
             if (this.activeChecker !== null)
                 this.activeChecker.downlight(canvas, this.block_size);
                 this.redraw(canvas);
+                this.markAvailable(canvas);
             this.activeChecker = checker;
             this.activeChecker.highlight(canvas, this.block_size);
             const moves = this.activeChecker.findPossibleMoves(this.checkers);  
@@ -80,6 +81,7 @@ export class Board {
         else {
             checker.downlight(canvas, this.block_size);
             this.redraw(canvas)
+            this.markAvailable(canvas)
         }
     }
 
@@ -92,6 +94,7 @@ export class Board {
         this.game.changeTurn(); 
         this.redraw(canvas);
         this.available = this.thereWillBeBlood();
+        this.markAvailable(canvas);
     }
 
     redraw(canvas) {
@@ -138,5 +141,13 @@ export class Board {
                 available[[checker.x, checker.y]] = checker;
         }
         return available;
+    }
+
+    markAvailable(canvas) {
+        const ctx = canvas.getContext('2d');
+        for (let key in this.available) {
+            this.colorBlock(ctx, key[0], key[2], "#FFCF48");
+            this.available[key].draw(canvas);
+        }
     }
 }
