@@ -118,7 +118,6 @@ export class Board {
 
     drawPaths(canvas, moves) {
         const {path, destinations, eaten} = moves;
-        console.log(destinations)
         const ctx = canvas.getContext('2d');
         for (let key in path) {
             this.colorBlock(ctx, path[key][0], path[key][1], Colors.BLUE);

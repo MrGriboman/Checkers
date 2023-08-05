@@ -18,6 +18,8 @@ export class Checker {
         this.remove(canvas, block_size)
         this.x = x;
         this.y = y;   
+        if (this.color == Colors.BLACK && y == 7 || this.color == Colors.WHITE && y == 0)
+            this.turnIntoKing();
         this.draw(canvas)     
     }
 
@@ -28,6 +30,12 @@ export class Checker {
         ctx.beginPath();
         ctx.arc(this.x * block_size + block_size / 2, this.y * block_size + block_size / 2, block_size / 2 - 10, 0, 2 * Math.PI);
         ctx.fill();
+        if (this.isKing) {
+            ctx.beginPath();
+            ctx.fillStyle = Colors.GOLD;
+            ctx.arc(this.x * block_size + block_size / 2, this.y * block_size + block_size / 2, block_size / 4, 0, 2 * Math.PI);
+            ctx.fill();
+        }
     }
 
     highlight(canvas, block_size) {
