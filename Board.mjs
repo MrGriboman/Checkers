@@ -55,8 +55,10 @@ export class Board {
 
     handleClick(canvas, event) {
         const rect = canvas.getBoundingClientRect();
-        const x = Math.floor((event.clientX - rect.left) / this.block_size);        
-        const y = Math.floor((event.clientY - rect.top) / this.block_size);
+        let x = Math.floor((event.clientX - rect.left) / this.block_size);        
+        let y = Math.floor((event.clientY - rect.top) / this.block_size);
+        //if (this.game.turn == Colors.BLACK)            
+            //[x, y] = [7 - x, 7 - y]
         if ([x, y] in this.checkers && this.checkers[[x, y]].color === this.game.turn && Object.keys(this.available).length == 0 || [x, y] in this.available) {            
             this.chooseChecker(canvas, x, y);
         }
@@ -92,8 +94,9 @@ export class Board {
         this.checkers[[this.activeChecker.x, this.activeChecker.y]] = this.activeChecker;
         this.activeChecker = null;
         this.removeEaten(this.destinations[[x, y]]);
-        this.game.changeTurn(); 
-        this.redraw(canvas);
+        this.game.changeTurn();
+       // this.rotateBoard(canvas);
+        this.redraw(canvas);       
         this.available = this.thereWillBeBlood();
         this.markAvailable(canvas);
     }
@@ -157,4 +160,15 @@ export class Board {
             delete this.checkers[[key]];
         }
     }
+
+    rotateBoard(canvas) {
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.scrollWidth / 2;
+        const centerY = canvas.scrollHeight / 2;
+        this.redraw(canvas)        
+        ctx.translate(centerX, centerY)
+        ctx.rotate(Math.PI)
+        ctx.translate(-centerX, -centerY) 
+    }
+    
 }
