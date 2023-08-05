@@ -4,12 +4,10 @@ import { Game } from "./Game.mjs";
 
 export class Board {
     constructor(block_size, game) {
-        this.field = [...Array(100)];
         this.block_size = block_size;
         this.checkers = {};
         this.game = game;
-        this.activeChecker = null;
-        this.gottaKill = false;
+        this.activeChecker = null;      
         this.available = {};
         this.destinations = {};
     }   
@@ -54,6 +52,10 @@ export class Board {
     }
 
     handleClick(canvas, event) {
+        if (this.game.over) {
+            this.game.over = false;
+            this.replay(canvas);
+        }
         const rect = canvas.getBoundingClientRect();
         let x = Math.floor((event.clientX - rect.left) / this.block_size);        
         let y = Math.floor((event.clientY - rect.top) / this.block_size);
@@ -93,12 +95,16 @@ export class Board {
         this.activeChecker.move(canvas, x, y);
         this.checkers[[this.activeChecker.x, this.activeChecker.y]] = this.activeChecker;
         this.activeChecker = null;
-        this.removeEaten(this.destinations[[x, y]]);
+        this.removeEaten(this.destinations[[x, y]]);        
         this.game.changeTurn();
        // this.rotateBoard(canvas);
         this.redraw(canvas);       
         this.available = this.thereWillBeBlood();
         this.markAvailable(canvas);
+        if (this.game.isGameOver(this.checkers)) {
+            this.game.over = true;
+            this.displayGameOverScreen(canvas);
+        }
     }
 
     redraw(canvas) {
@@ -169,6 +175,23 @@ export class Board {
         ctx.translate(centerX, centerY)
         ctx.rotate(Math.PI)
         ctx.translate(-centerX, -centerY) 
+    }
+
+    replay(canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.checkers = {};
+        this.game.turn = Colors.WHITE;
+        this.drawBoard(canvas);
+        this.populate(canvas);
+    }
+
+    displayGameOverScreen(canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.textAlign = 'center';
+        ctx.font = "36pt Arial";
+        ctx.fillText('Game over! Click to restart.', canvas.width * 0.5, canvas.height * 0.5);
     }
     
 }
