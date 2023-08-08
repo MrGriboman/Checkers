@@ -6,6 +6,6 @@ export const Colors = Object.freeze({
     GREEN: "#77DD77",
     BLUE: "#7FC7FF",
     BROWN: "#CC9966",
-    ACID_GREEN: "00FF00",
-    GOLD: "#ffd700"
+    ACID_GREEN: "#00FF00",
+    GOLD: "#FFD700"
 });

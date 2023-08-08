@@ -40,7 +40,7 @@ export class Checker {
 
     highlight(canvas, block_size) {
         const ctx = canvas.getContext('2d');
-        ctx.strokeStyle = Colors.GREEN;
+        ctx.strokeStyle = Colors.ACID_GREEN;
         ctx.lineWidth = 5;        
         ctx.beginPath();
         ctx.arc(this.x * block_size + block_size / 2, this.y * block_size + block_size / 2, block_size / 2 - 10, 0, 2 * Math.PI);
@@ -62,7 +62,9 @@ export class Checker {
         ctx.fill();
     }
 
-    findPossibleMoves(checkers, x=this.x, y=this.y, path=[], destinations={}, eaten={}, eaten_t={}) {        
+    findPossibleMoves(checkers, x=this.x, y=this.y, path=[], destinations={}, eaten={}, eaten_t={}) {   
+        if (this.isKing)
+            return this.findMovesForKing(checkers, x, y, path, destinations, eaten, eaten_t);  
         for (let i = -1; i <= 1; i += 2) {
             for (let j = -1; j <= 1; j += 2) {
                 let found_new_path = false;                         
@@ -91,6 +93,52 @@ export class Checker {
             }
         }
         return { 
+            'path': path,
+            'destinations': destinations,
+            'eaten': eaten
+        }
+    }
+
+    findMovesForKing(checkers, x, y, path, destinations, eaten, eaten_t) {
+        for (let k = 1; k < 8; ++k) {
+            for (let i = -1; i <= 1; i += 2) {
+                for (let j = -1; j <= 1; j += 2) {
+                    let found_new_path = false;                         
+                    if ([x + i * k, y + j * k] in checkers && checkers[[x + i * k, y + j * k]].color !== this.color && (x + i*k + i >= 0 && x + i*k + i < 8 && y + j*k + j >= 0 && y + j*k + j < 8) && !([x + i*k + i, y + j*k + j] in checkers)) { 
+                        if ([x + i*k, y + j*k] in eaten)
+                            continue;
+                        found_new_path = true; 
+                        for (let t = 1; t < 7; ++t) {   
+                            if (x + i*k + i*t < 0 || x + i*k + i*t > 7 || y + j*k + j*t < 0 || y + j*k + j*t > 7)
+                                break;                
+                            path.push([x + i*k + i*t, y + j*k + j*t]);
+                        }
+                        eaten[[x + i*k, y + j*k]] = checkers[[x + i*k, y + j*k]];   
+                        eaten_t[[x + i*k, y + j*k]] = checkers[[x + i*k, y + j*k]]; 
+                        for (let t = 1; t < 7; ++t) {   
+                            if (x + i*k + i*t < 0 || x + i*k + i*t > 7 || y + j*k + j*t < 0 || y + j*k + j*t > 7)
+                                break;                
+                                this.findPossibleMoves(checkers, x + i*k + i*t, y + j*k + j*t, path, destinations, eaten, eaten_t);
+                        }                                        
+                    }
+                    if (found_new_path) {                    
+                        destinations[[path.at(-1)[0], path.at(-1)[1]]] = eaten_t;
+                        eaten_t = {};
+                    }
+                }
+            }  
+        }       
+        if (Object.keys(eaten).length == 0) {
+            for (let k = 1; k < 8; ++k) {
+                for (let i = -1; i <= 1; i += 2) {
+                    for (let j = -1; j <= 1; j += 2) {
+                        if (!([x + i*k, y + j*k] in checkers) && !(x + i*k < 0 || x + i*k > 7 || y + j*k < 0 || y + j*k > 7))
+                            destinations[[x + i*k, y + j*k]] = true;
+                    }
+                }
+            }
+        }
+        return {
             'path': path,
             'destinations': destinations,
             'eaten': eaten
