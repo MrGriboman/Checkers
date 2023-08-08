@@ -109,9 +109,10 @@ export class Checker {
                             continue;
                         found_new_path = true; 
                         for (let t = 1; t < 7; ++t) {   
-                            if (x + i*k + i*t < 0 || x + i*k + i*t > 7 || y + j*k + j*t < 0 || y + j*k + j*t > 7)
+                            if (x + i*k + i*t < 0 || x + i*k + i*t > 7 || y + j*k + j*t < 0 || y + j*k + j*t > 7 || [x + i*k + i*t, y + j*k + j*t] in checkers)
                                 break;                
                             path.push([x + i*k + i*t, y + j*k + j*t]);
+                            destinations[[path.at(-1)[0], path.at(-1)[1]]] = eaten_t;
                         }
                         eaten[[x + i*k, y + j*k]] = checkers[[x + i*k, y + j*k]];   
                         eaten_t[[x + i*k, y + j*k]] = checkers[[x + i*k, y + j*k]]; 
@@ -121,8 +122,7 @@ export class Checker {
                                 this.findPossibleMoves(checkers, x + i*k + i*t, y + j*k + j*t, path, destinations, eaten, eaten_t);
                         }                                        
                     }
-                    if (found_new_path) {                    
-                        destinations[[path.at(-1)[0], path.at(-1)[1]]] = eaten_t;
+                    if (found_new_path) {                                            
                         eaten_t = {};
                     }
                 }
